@@ -1,8 +1,10 @@
 services:
   - type: web
-    name: track-cars-app
-    env: php
+    name: php-app
+    env: docker
     plan: free
-    buildCommand: bash build.sh  # ใช้ build.sh เพื่อเรียกใช้งาน Composer และติดตั้ง dependencies
-    startCommand: php -S 0.0.0.0:$PORT -t public  # ใช้คำสั่ง php เพื่อเริ่มต้นแอป
+    dockerfilePath: Dockerfile   # ตั้ง path ของ Dockerfile
     autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 80
