@@ -1,10 +1,8 @@
 services:
   - type: web
-    name: track-cars-app  # สามารถเปลี่ยนเป็นชื่อที่ต้องการได้
-    env: docker
+    name: track-cars-app
+    env: php
     plan: free
-    dockerfilePath: Dockerfile
+    buildCommand: composer install  
+    startCommand: php -S 0.0.0.0:$PORT -t .  
     autoDeploy: true
-    envVars:
-      - key: PORT
-        value: 80
