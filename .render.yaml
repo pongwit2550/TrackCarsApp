@@ -3,6 +3,6 @@ services:
     name: track-cars-app
     env: php
     plan: free
-    buildCommand: composer install  
-    startCommand: php -S 0.0.0.0:$PORT -t .  
+    buildCommand: bash build.sh  # ใช้ build.sh เพื่อเรียกใช้งาน Composer และติดตั้ง dependencies
+    startCommand: php -S 0.0.0.0:$PORT -t public  # ใช้คำสั่ง php เพื่อเริ่มต้นแอป
     autoDeploy: true
