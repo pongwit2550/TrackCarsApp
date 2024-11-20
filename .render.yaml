@@ -3,7 +3,7 @@ services:
     name: php-app
     env: docker
     plan: free
-    dockerfilePath: Dockerfile   # ตั้ง path ของ Dockerfile
+    dockerfilePath: ./Dockerfile   # ตั้ง path ของ Dockerfile
     autoDeploy: true
     envVars:
       - key: PORT
