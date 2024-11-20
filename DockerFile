@@ -1,17 +1,17 @@
-# ใช้ official PHP image จาก Docker Hub
-FROM php:8.1-apache
+# ใช้ PHP image พื้นฐาน
+FROM php:7.4-apache
 
-# ติดตั้ง Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# ตั้งค่า Document Root
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 
-# ตั้งค่า working directory
-WORKDIR /var/www/html
+# คัดลอกโปรเจ็กต์ไปที่ Apache document root
+COPY . /var/www/html/
 
-# คัดลอกไฟล์โปรเจ็กต์ทั้งหมดไปที่ container
-COPY . .
-
-# ติดตั้ง dependencies จาก composer.json
-RUN composer install
+# ติดตั้ง PostgreSQL extension
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
 
 # เปิดพอร์ต 80
 EXPOSE 80
+
+# เริ่ม Apache
+CMD ["apache2-foreground"]
