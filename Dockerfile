@@ -1,5 +1,5 @@
 # เลือก image ของ PHP ที่มี Apache
-FROM php:8.1-apache
+FROM php:7.4-apache
 
 # กำหนด directory ที่จะเก็บไฟล์โปรเจกต์
 WORKDIR /var/www/html
@@ -8,11 +8,15 @@ WORKDIR /var/www/html
 COPY . .
 
 # ติดตั้ง dependencies เช่น extension ที่ต้องใช้
-RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pgsql pdo_pgsql
+
 
 # กำหนด port ที่ต้องการ
 EXPOSE 80
 
 # กำหนดคำสั่งในการเริ่มต้นเว็บเซิร์ฟเวอร์
 CMD ["apache2-foreground"]
+
+
+
+
