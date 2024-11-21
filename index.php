@@ -3,12 +3,12 @@ session_start();
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $user_id = $_POST['user_id'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
     // ตรวจสอบข้อมูลผู้ใช้จากฐานข้อมูล
-    $sql = 'SELECT * FROM "User" WHERE user_id = $1 AND password = $2';
-    $result = pg_query_params($conn, $sql, array($user_id, $password));
+    $sql = 'SELECT * FROM "User" WHERE email = $1 AND password = $2';
+    $result = pg_query_params($conn, $sql, array($email, $password));
 
     if ($result && pg_num_rows($result) > 0) {
         $user = pg_fetch_assoc($result);
@@ -227,8 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2 class="login-title">Login</h2>
             <form action="index.php" method="POST">
                 <div class="mb-3">
-                    <label for="user_id" class="form-label">เลขบัตรประชาชน</label>
-                    <input type="text" name="user_id" id="user_id" class="form-control" placeholder="กรุณากรอกเลขบัตรประชาชน" required>
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="text" name="email" id="email" class="form-control" placeholder="กรุณากรอกอีเมล" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">รหัสผ่าน:</label>
