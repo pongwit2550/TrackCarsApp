@@ -25,10 +25,12 @@ if ($result === false) {
 $user = pg_fetch_all($result); // ใช้ fetch_all เพราะต้องการข้อมูลหลายแถว
 
 // ตรวจสอบผลลัพธ์ว่าเป็น array หรือไม่ก่อนใช้งาน
+/*
 if ($user === false) {
     echo "No user data found.";
     exit();
 }
+*/
 
 // คำนวณ 2 ช่วงเวลาที่ผู้ใช้บันทึกบ่อยที่สุด
 $sql_time_stats = 'SELECT time, COUNT(time) as count FROM "Record_Time" WHERE user_id = $1 GROUP BY time ORDER BY count DESC LIMIT 2';
