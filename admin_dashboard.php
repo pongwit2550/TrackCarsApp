@@ -174,6 +174,7 @@ $user = pg_fetch_all($result);
                         <th>Age</th>
                         <th>Car Registration</th>
                         <th>Edit</th>
+                        <th>Img</th>
                         <th>Delete</th>
                     </tr>
                 </thead>

@@ -2,17 +2,13 @@
 session_start();
 require_once 'db.php';
 
-$userId = $_GET['id'];
+$userId = $_SESSION['user_id'];
 $sql = 'SELECT * FROM "User" WHERE user_id = $1';
 $result = pg_query_params($conn, $sql, [$userId]);
 $user = pg_fetch_assoc($result);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = $_POST['first_name'];
-    $lastName = $_POST['last_name'];
-    $email = $_POST['email'];
-    $age = $_POST['age'];
-    $carRegistration = $_POST['car_registration'];
+
 
     // อัปเดตรูปโปรไฟล์
     $profileImage = $user['profile_image'];
@@ -23,18 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profileImage = $profileImageName; // เก็บเฉพาะชื่อไฟล์ในฐานข้อมูล
     }
 
-    // อัปเดตรูปรถ
-    $carImage = $user['car_image'];
-    if (isset($_FILES['car_image']) && $_FILES['car_image']['error'] === UPLOAD_ERR_OK) {
-        $carImageName = uniqid() . '-' . $_FILES['car_image']['name']; // ใช้เฉพาะชื่อไฟล์
-        $carImagePath = './uploads/car/' . $carImageName;
-        move_uploaded_file($_FILES['car_image']['tmp_name'], $carImagePath);
-        $carImage = $carImageName; // เก็บเฉพาะชื่อไฟล์ในฐานข้อมูล
-    }
+ 
 
     // อัปเดตข้อมูลในฐานข้อมูล
-    $sql = 'UPDATE "User" SET user_first_name=$1, user_last_name=$2, email=$3, age=$4, car_registration=$5, user_img=$6, car_registration_img=$7 WHERE user_id=$8';
-    $result = pg_query_params($conn, $sql, [$firstName, $lastName, $email, $age, $carRegistration, $profileImage, $carImage, $userId]);
+    $sql = 'UPDATE "User" SET  user_img=$1 WHERE user_id=$2';
+    $result = pg_query_params($conn, $sql, [$profileImage, $userId]);
 
     if ($result) {
         header('Location: user_dashboard.php');
@@ -182,6 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .back-button:hover {
             background-color: #e60000; /* สีแดงเข้มเมื่อ hover */
             }
+
+            .color-danger{
+                color: #e60000;
+            }
                         
     </style>
 </head>
@@ -197,46 +190,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="back-button" onclick="goBack()">X</div>
             <center>
             <div class="card-header text-center w-25">
-                Edit User Information
+                แก้ไขรูปผู้ใช้
             </div>
             </center>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
+                    
                     <div class="mb-3">
-                        <label class="form-label">ชื่อ:</label>
-                        <input type="text" name="first_name" class="form-control" value="<?= htmlspecialchars($user['user_first_name']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">นามสกุล:</label>
-                        <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($user['user_last_name']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email:</label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">อายุ:</label>
-                        <input type="number" name="age" class="form-control" value="<?= htmlspecialchars($user['age']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">หมายเลขป้ายทะเบียนรถยนต์:</label>
-                        <input type="text" name="car_registration" class="form-control" value="<?= htmlspecialchars($user['car_registration']); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">รูปผู้ใช้งาน (สามารถใช้ได้แค่ไฟลนามสกุล .png และ .jpg):</label>
+                        <label class="form-label">รูปผู้ใช้งาน <p class="color-danger">(สามารถใช้ได้แค่ไฟลนามสกุล .png และ .jpg):</p></label>
                         <input type="file" name="profile_image" class="form-control" accept="image/*">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">รูปป้ายทะเบียนรถยนต์:</label>
-                        <input type="file" name="car_image" class="form-control" accept="image/*">
-                    </div>
+                   
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
                     </div>
                     <script>
                         // xย้อน
                         function goBack() {
-                            window.history.back();
+                        window.history.back();
                         }
                     </script>
                 </form>

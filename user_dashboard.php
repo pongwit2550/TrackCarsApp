@@ -299,14 +299,18 @@ if ($time_stats_result) {
         <div class="card p-4 mb-4">
             <center>
                 <h1 class="card-title text-alight-center">ข้อมูลผู้ใช้</h1>
-                <img src="./uploads/profile/<?php echo htmlspecialchars($_SESSION['user_img']); ?>" class="rounded-circle profile-img me-2 mt-3" width="120" height="120" alt="Profile Image">
+                <a href="user_edit_img.php?id=<?php echo $_SESSION['user_id'];?>">
+                    <img src="./uploads/profile/<?php echo htmlspecialchars($_SESSION['user_img']); ?>" class="rounded-circle profile-img me-2 mt-3" width="120" height="120" alt="Profile Image">
+                </a>
             </center>
             <div class="card mt-3">
                 <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($_SESSION['first_name']) . " " . htmlspecialchars($_SESSION['last_name']); ?></p>
                 <p class="mt-2 ms-5" ><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></p>
                 <p class="mt-2 ms-5"><strong>อายุ:</strong> <?php echo htmlspecialchars($_SESSION['age']); ?></p>
                 <p class="mt-2 ms-5"><strong>ทะเบียนรถที่คุณลงทะเบียนไว้:</strong> <?php echo htmlspecialchars($_SESSION['car_registration']); ?></p>
-                <img src="./uploads/car/<?php echo htmlspecialchars($_SESSION['car_registration_img']); ?>" class="rounded profile-img mt-2 ms-5" width="250" height="250" alt="Profile Image">
+                <a href="car_edit_img.php?id=<?php echo $_SESSION['user_id'];?>">
+                  <img src="./uploads/car/<?php echo htmlspecialchars($_SESSION['car_registration_img']); ?>" class="rounded profile-img mt-2 ms-5" width="250" height="250" alt="Profile Image">
+                </a>
                 <a class="btn btn-success mt-3 ms-5 me-5 mb-5" href="user_edit.php?id=<?php echo $_SESSION['user_id']; ?>" > Edit</a>
             </div>
         </div>
