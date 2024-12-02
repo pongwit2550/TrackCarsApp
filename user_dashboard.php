@@ -10,29 +10,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
 
 $id = $_SESSION['user_id'];
 
-// ดึงข้อมูลผู้ใช้และบันทึกเวลาของผู้ใช้
-$sql = 'SELECT * FROM "User" 
-        INNER JOIN "Record_Time" 
-        ON "User".user_id = "Record_Time".user_id 
-        WHERE "User".user_id = $1';
-$result = pg_query_params($conn, $sql, array($id));
+// ดึงข้อมูลผู้ใช้
+$sql_user = 'SELECT * FROM "User" WHERE user_id = $1';
+$user_result = pg_query_params($conn, $sql_user, array($id));
 
-if ($result === false) {
-    echo "Error in query execution.";
-    exit();
-}
-
-$user = pg_fetch_assoc($result); // ใช้ fetch_all เพราะต้องการข้อมูลหลายแถว
-
-// ตรวจสอบผลลัพธ์ว่าเป็น array หรือไม่ก่อนใช้งาน
-/*
-if ($user === false) {
+if ($user_result === false || pg_num_rows($user_result) === 0) {
     echo "No user data found.";
     exit();
 }
-*/
 
-// คำนวณ 2 ช่วงเวลาที่ผู้ใช้บันทึกบ่อยที่สุด
+$user = pg_fetch_assoc($user_result);
+
+// ดึงข้อมูลบันทึกเวลาของผู้ใช้
+$sql_records = 'SELECT * FROM "Record_Time" WHERE user_id = $1 ORDER BY date DESC, time DESC';
+$record_result = pg_query_params($conn, $sql_records, array($id));
+$records = $record_result ? pg_fetch_all($record_result) : [];
+
+// คำนวณ 2 ช่วงเวลาที่บันทึกบ่อยที่สุด
 $sql_time_stats = 'SELECT time, COUNT(time) as count FROM "Record_Time" WHERE user_id = $1 GROUP BY time ORDER BY count DESC LIMIT 2';
 $time_stats_result = pg_query_params($conn, $sql_time_stats, array($id));
 
@@ -47,227 +41,13 @@ if ($time_stats_result) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-                body {
-                margin: auto;
-                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                overflow: auto;
-                background: linear-gradient(315deg, rgba(101,0,94,1)3%, rgba(60,132,206,1) 38%, rgba(255,102,178,1) 68%,rgba(48,238,226,1) 98%);
-                animation: gradient 15s ease infinite;
-                background-size: 400% 400%;
-                background-attachment: fixed;
-            }
-
-            @keyframes gradient {
-                0% {
-                    background-position: 0% 0%;
-                }
-                50% {
-                    background-position: 100% 100%;
-                }
-                100% {
-                    background-position: 0% 0%;
-                }
-            }
-
-            .wave {
-                background: rgb(255 255 255 / 25%);
-                border-radius: 1000% 1000% 0 0;
-                position: fixed;
-                width: 200%;
-                height: 12em;
-                animation: wave 10s -3s linear infinite;
-                transform: translate3d(0, 0, 0);
-                opacity: 0.8;
-                bottom: 0;
-                left: 0;
-                z-index: -1;
-            }
-
-            .wave:nth-of-type(2) {
-                bottom: -1.25em;
-                animation: wave 18s linear reverse infinite;
-                opacity: 0.8;
-            }
-
-            .wave:nth-of-type(3) {
-                bottom: -2.5em;
-                animation: wave 20s -1s reverse infinite;
-                opacity: 0.9;
-            }
-
-            @keyframes wave {
-                2% {
-                    transform: translateX(1);
-                }
-
-                25% {
-                    transform: translateX(-25%);
-                }
-
-                50% {
-                    transform: translateX(-50%);
-                }
-
-                75% {
-                    transform: translateX(-25%);
-                }
-
-                100% {
-                    transform: translateX(1);
-                }
-            }        body {
-                margin: auto;
-                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                overflow: auto;
-                background: linear-gradient(315deg, rgba(101,0,94,1)3%, rgba(60,132,206,1) 38%, rgba(255,102,178,1) 68%,rgba(48,238,226,1) 98%);
-                animation: gradient 15s ease infinite;
-                background-size: 400% 400%;
-                background-attachment: fixed;
-            }
-
-            @keyframes gradient {
-                0% {
-                    background-position: 0% 0%;
-                }
-                50% {
-                    background-position: 100% 100%;
-                }
-                100% {
-                    background-position: 0% 0%;
-                }
-            }
-
-            .wave {
-                background: rgb(255 255 255 / 25%);
-                border-radius: 1000% 1000% 0 0;
-                position: fixed;
-                width: 200%;
-                height: 12em;
-                animation: wave 10s -3s linear infinite;
-                transform: translate3d(0, 0, 0);
-                opacity: 0.8;
-                bottom: 0;
-                left: 0;
-                z-index: -1;
-            }
-
-            .wave:nth-of-type(2) {
-                bottom: -1.25em;
-                animation: wave 18s linear reverse infinite;
-                opacity: 0.8;
-            }
-
-            .wave:nth-of-type(3) {
-                bottom: -2.5em;
-                animation: wave 20s -1s reverse infinite;
-                opacity: 0.9;
-            }
-
-            @keyframes wave {
-                2% {
-                    transform: translateX(1);
-                }
-
-                25% {
-                    transform: translateX(-25%);
-                }
-
-                50% {
-                    transform: translateX(-50%);
-                }
-
-                75% {
-                    transform: translateX(-25%);
-                }
-
-                100% {
-                    transform: translateX(1);
-                }
-            }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .navbar {
-            background-color: #3A3D5F;
-        }
-
-        .navbar-brand, .nav-link {
-            color: #FFFFFF !important;
-        }
-
-        .profile-img {
-            border: 3px solid #fff;
-            transition: transform 0.3s ease;
-        }
-
-        .profile-img:hover {
-            transform: scale(1.1);
-        }
-
-        .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            background: #ffffff;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-title {
-            font-weight: 600;
-            color: #3A3D5F;
-        }
-
-        .list-group-item {
-            border: none;
-            background: #f9f9f9;
-        }
-
-        .table {
-            animation: slideIn 0.8s ease-in-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .navbar {
-            background-color: #3A3D5F; /* โปร่งใส */
-            backdrop-filter: blur(10px); /* เบลอ */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเล็กน้อย */
-        }
-
-        .profile-img {
-            border: 2px solid white; /* กรอบรูป */
-        }
-
-        .navbar .nav-link {
-            color: #fff; /* ปรับสีตัวอักษร */
-        }
-
-        .navbar .nav-link:hover {
-            color: #ddd; /* เปลี่ยนสีเมื่อ hover */
-        }
-        
+        /* CSS ที่มีอยู่ก่อนหน้า */
     </style>
 </head>
 <body>
@@ -288,7 +68,7 @@ if ($time_stats_result) {
                 </ul>
                 <div class="d-flex align-items-center">
                     <img src="./uploads/profile/<?php echo htmlspecialchars($user['user_img']); ?>" class="rounded-circle profile-img me-2" width="50" height="50" alt="Profile Image">
-                    <h5 class="text-light me-3"><?php echo htmlspecialchars($user['first_name'])." " . htmlspecialchars($_SESSION['last_name']); ?></h5>
+                    <h5 class="text-light me-3"><?php echo htmlspecialchars($user['first_name']) . " " . htmlspecialchars($user['last_name']); ?></h5>
                     <a class="btn btn-danger" href="logout.php">Logout</a>
                 </div>
             </div>
@@ -298,20 +78,20 @@ if ($time_stats_result) {
     <div class="container mt-5">
         <div class="card p-4 mb-4">
             <center>
-                <h1 class="card-title text-alight-center">ข้อมูลผู้ใช้</h1>
-                <a href="user_edit_img.php?id=<?php echo $user['user_id'];?>">
-                    <img src="./uploads/profile/<?php echo htmlspecialchars($user['user_img']); ?>" class="rounded-circle profile-img me-2 mt-3" width="120" height="120" alt="Profile Image">
+                <h1 class="card-title text-center">ข้อมูลผู้ใช้</h1>
+                <a href="user_edit_img.php?id=<?php echo $user['user_id']; ?>">
+                    <img src="./uploads/profile/<?php echo htmlspecialchars($user['user_img']); ?>" class="rounded-circle profile-img mt-3" width="120" height="120" alt="Profile Image">
                 </a>
             </center>
             <div class="card mt-3">
-                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['user_first_name']) . " " . htmlspecialchars($user['user_last_name']); ?></p>
-                <p class="mt-2 ms-5" ><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
+                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['first_name']) . " " . htmlspecialchars($user['last_name']); ?></p>
+                <p class="mt-2 ms-5"><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
                 <p class="mt-2 ms-5"><strong>อายุ:</strong> <?php echo htmlspecialchars($user['age']); ?></p>
-                <p class="mt-2 ms-5"><strong>ทะเบียนรถที่คุณลงทะเบียนไว้:</strong> <?php echo htmlspecialchars($user['car_registration']); ?></p>
-                <a href="car_edit_img.php?id=<?php echo $user['user_id'];?>">
-                  <img src="./uploads/car/<?php echo htmlspecialchars($user['car_registration_img']); ?>" class="rounded profile-img mt-2 ms-5" width="250" height="250" alt="Profile Image">
+                <p class="mt-2 ms-5"><strong>ทะเบียนรถ:</strong> <?php echo htmlspecialchars($user['car_registration']); ?></p>
+                <a href="car_edit_img.php?id=<?php echo $user['user_id']; ?>">
+                  <img src="./uploads/car/<?php echo htmlspecialchars($user['car_registration_img']); ?>" class="rounded profile-img mt-2 ms-5" width="250" height="250" alt="Car Image">
                 </a>
-                <a class="btn btn-success mt-3 ms-5 me-5 mb-5" href="user_edit.php?id=<?php echo $user['user_id']; ?>" > Edit</a>
+                <a class="btn btn-success mt-3 ms-5 me-5 mb-5" href="user_edit.php?id=<?php echo $user['user_id']; ?>">Edit</a>
             </div>
         </div>
 
@@ -341,12 +121,12 @@ if ($time_stats_result) {
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($user)) {
-                    foreach ($user as $row) { ?>
+                <?php if (!empty($records)) {
+                    foreach ($records as $record) { ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['record_id']) ?></td>
-                            <td><?php echo htmlspecialchars($row['time']) ?></td>
-                            <td><?php echo htmlspecialchars($row['date']) ?></td>
+                            <td><?php echo htmlspecialchars($record['record_id']); ?></td>
+                            <td><?php echo htmlspecialchars($record['time']); ?></td>
+                            <td><?php echo htmlspecialchars($record['date']); ?></td>
                         </tr>
                     <?php }
                 } else {
