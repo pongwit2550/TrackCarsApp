@@ -21,6 +21,7 @@ if ($result === false) {
 }
 
 $user = pg_fetch_all($result);
+$numid = 0;
 ?>
 
 <!DOCTYPE html>
@@ -183,7 +184,7 @@ $user = pg_fetch_all($result);
                         foreach ($user as $row) {
                     ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                            <td><?php echo $numid ?></td>
                             <td><?php echo htmlspecialchars($row['user_first_name']); ?></td>
                             <td><?php echo htmlspecialchars($row['user_last_name']); ?></td>
                             <td><?php echo htmlspecialchars($row['email']); ?></td>
@@ -201,7 +202,7 @@ $user = pg_fetch_all($result);
                             </td>
                         </tr>
                     <?php
-                        }
+                      $numid++;  }
                     } else {
                         echo "<tr><td colspan='8'>No records found.</td></tr>";
                     } ?>
