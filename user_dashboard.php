@@ -304,7 +304,7 @@ if ($time_stats_result) {
                 </a>
             </center>
             <div class="card mt-3">
-                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['first_name']) . " " . htmlspecialchars($_SESSION['last_name']); ?></p>
+                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['user_first_name']) . " " . htmlspecialchars($user['user_last_name']); ?></p>
                 <p class="mt-2 ms-5" ><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
                 <p class="mt-2 ms-5"><strong>อายุ:</strong> <?php echo htmlspecialchars($user['age']); ?></p>
                 <p class="mt-2 ms-5"><strong>ทะเบียนรถที่คุณลงทะเบียนไว้:</strong> <?php echo htmlspecialchars($user['car_registration']); ?></p>
