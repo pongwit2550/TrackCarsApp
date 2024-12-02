@@ -22,7 +22,7 @@ if ($result === false) {
     exit();
 }
 
-$user = pg_fetch_all($result); // ใช้ fetch_all เพราะต้องการข้อมูลหลายแถว
+$user = pg_fetch_assoc($result); // ใช้ fetch_all เพราะต้องการข้อมูลหลายแถว
 
 // ตรวจสอบผลลัพธ์ว่าเป็น array หรือไม่ก่อนใช้งาน
 /*
