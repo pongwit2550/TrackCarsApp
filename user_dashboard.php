@@ -281,7 +281,7 @@ if ($time_stats_result) {
                 </ul>
                 <div class="d-flex align-items-center">
                     <img src="./uploads/profile/<?php echo htmlspecialchars($user['user_img']); ?>" class="rounded-circle profile-img me-2" width="50" height="50" alt="Profile Image">
-                    <h5 class="text-light me-3"><?php echo htmlspecialchars($user['first_name']) . " " . htmlspecialchars($user['last_name']); ?></h5>
+                    <h5 class="text-light me-3"><?php echo htmlspecialchars($user['user_first_name']) . " " . htmlspecialchars($user['user_last_name']); ?></h5>
                     <a class="btn btn-danger" href="logout.php">Logout</a>
                 </div>
             </div>
@@ -297,7 +297,7 @@ if ($time_stats_result) {
                 </a>
             </center>
             <div class="card mt-3">
-                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['first_name']) . " " . htmlspecialchars($user['last_name']); ?></p>
+                <p class="mt-5 ms-5"><strong>ชื่อ:</strong> <?php echo htmlspecialchars($user['user_first_name']) . " " . htmlspecialchars($user['user_last_name']); ?></p>
                 <p class="mt-2 ms-5"><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
                 <p class="mt-2 ms-5"><strong>อายุ:</strong> <?php echo htmlspecialchars($user['age']); ?></p>
                 <p class="mt-2 ms-5"><strong>ทะเบียนรถ:</strong> <?php echo htmlspecialchars($user['car_registration']); ?></p>
